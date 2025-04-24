@@ -132,10 +132,11 @@ class VehicleResource extends Resource
                 CommentsAction::make()
                     ->label('Comentarios')
                     ->color('info'),
-                Tables\Actions\EditAction::make()
-                    ->color('warning'),
                 Tables\Actions\ViewAction::make(),
-            ]);
+            ])
+            ->recordUrl(function ($record){
+                return static::getUrl('view', ['record' => $record]);
+            });
     }
 
     public static function getRelations(): array
@@ -149,8 +150,9 @@ class VehicleResource extends Resource
     {
         return [
             'index' => Pages\ListVehicles::route('/'),
-            'create' => Pages\CreateVehicle::route('/create'),
-            'edit' => Pages\EditVehicle::route('/{record}/edit'),
+            // 'create' => Pages\CreateVehicle::route('/create'),
+            // 'edit' => Pages\EditVehicle::route('/{record}/edit'),
+            'view' => Pages\ViewVehicle::route('/{record}'),
         ];
     }
 }

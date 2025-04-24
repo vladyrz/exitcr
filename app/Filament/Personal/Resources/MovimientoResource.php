@@ -71,6 +71,10 @@ class MovimientoResource extends Resource
                             ->maxLength(20),
                         FileUpload::make('archivos')
                             ->label('Archivos adjuntos')
+                            ->multiple()
+                            ->downloadable()
+                            ->directory('archivos/' .now()->format('Y/m/d'))
+                            ->maxFiles(5),
                     ]),
             ]);
     }
@@ -107,6 +111,22 @@ class MovimientoResource extends Resource
                 TextColumn::make('kilometraje_final')
                     ->label('Kilometraje final')
                     ->alignCenter(),
+                TextColumn::make('movimiento_status')
+                    ->label('Estado del movimiento')
+                    ->badge()
+                    ->formatStateUsing(function ($state){
+                        return match ($state) {
+                            'pendiente' => 'Pendiente',
+                            'aprobado' => 'Aprobado',
+                            'rechazado' => 'Rechazado',
+                        };
+                    })
+                    ->color(fn (string $state): string => match ($state) {
+                        'pendiente' => 'warning',
+                        'aprobado' => 'success',
+                        'rechazado' => 'danger',
+                    })
+                    ->alignCenter(),
                 TextColumn::make('created_at')
                     ->label('Creado el')
                     ->dateTime()
@@ -127,7 +147,14 @@ class MovimientoResource extends Resource
                     ->options([
                         'salida' => 'Salida',
                         'ingreso' => 'Ingreso',
-                    ])
+                    ]),
+                SelectFilter::make('movimiento_status')
+                    ->label('Estado del movimiento')
+                    ->options([
+                        'pendiente' => 'Pendiente',
+                        'aprobado' => 'Aprobado',
+                        'rechazado' => 'Rechazado',
+                    ]),
             ])
             ->actions([
                 CommentsAction::make()

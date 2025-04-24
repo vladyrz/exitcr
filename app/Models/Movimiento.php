@@ -18,6 +18,7 @@ class Movimiento extends Model
         'kilometraje_inicial',
         'kilometraje_final',
         'archivos',
+        'movimiento_status',
     ];
 
     protected $casts = [

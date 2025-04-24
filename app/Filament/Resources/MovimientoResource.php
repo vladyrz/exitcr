@@ -36,6 +36,9 @@ class MovimientoResource extends Resource
 
     public static function form(Form $form): Form
     {
+
+        $isCreate = $form->getOperation() === 'create';
+
         return $form
             ->schema([
                 Section::make('Información del movimiento')
@@ -79,9 +82,19 @@ class MovimientoResource extends Resource
                         TextInput::make('kilometraje_final')
                             ->label('Kilometraje final')
                             ->maxLength(20),
+                        Select::make('movimiento_status')
+                            ->label('Estado del movimiento')
+                            ->options(
+                                $isCreate ? ['pendiente' => 'Pendiente']
+                                : [
+                                    'pendiente' => 'Pendiente',
+                                    'aprobado' => 'Aprobado',
+                                    'rechazado' => 'Rechazado',
+                                ]
+                            )
+                            ->required(),
                         FileUpload::make('archivos')
                             ->label('Archivos adjuntos')
-                            ->columnSpanFull()
                             ->multiple()
                             ->downloadable()
                             ->directory('archivos/' .now()->format('Y/m/d'))
@@ -126,6 +139,22 @@ class MovimientoResource extends Resource
                 TextColumn::make('kilometraje_final')
                     ->label('Kilometraje final')
                     ->alignCenter(),
+                TextColumn::make('movimiento_status')
+                    ->label('Estado del movimiento')
+                    ->badge()
+                    ->formatStateUsing(function ($state){
+                        return match ($state) {
+                            'pendiente' => 'Pendiente',
+                            'aprobado' => 'Aprobado',
+                            'rechazado' => 'Rechazado',
+                        };
+                    })
+                    ->color(fn (string $state): string => match ($state) {
+                        'pendiente' => 'warning',
+                        'aprobado' => 'success',
+                        'rechazado' => 'danger',
+                    })
+                    ->alignCenter(),
                 TextColumn::make('created_at')
                     ->label('Creado el')
                     ->dateTime()
@@ -154,6 +183,13 @@ class MovimientoResource extends Resource
                     ->options([
                         'salida' => 'Salida',
                         'ingreso' => 'Ingreso',
+                    ]),
+                SelectFilter::make('movimiento_status')
+                    ->label('Estado del movimiento')
+                    ->options([
+                        'pendiente' => 'Pendiente',
+                        'aprobado' => 'Aprobado',
+                        'rechazado' => 'Rechazado',
                     ]),
             ])
             ->actions([

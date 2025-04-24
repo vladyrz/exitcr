@@ -11,10 +11,10 @@ class CreateVehicle extends CreateRecord
 {
     protected static string $resource = VehicleResource::class;
 
-    protected function mutateFormDataBeforeCreate(array $data): array
-    {
-        $data['user_id'] = Auth::user()->id;
+    // protected function mutateFormDataBeforeCreate(array $data): array
+    // {
+    //     $data['user_id'] = Auth::user()->id;
 
-        return $data;
-    }
+    //     return $data;
+    // }
 }

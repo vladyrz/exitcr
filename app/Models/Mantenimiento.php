@@ -16,6 +16,7 @@ class Mantenimiento extends Model
         'user_id',
         'vehicle_id',
         'archivos',
+        'mantenimiento_status',
     ];
 
     protected $casts = [

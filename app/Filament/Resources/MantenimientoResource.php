@@ -34,6 +34,9 @@ class MantenimientoResource extends Resource
 
     public static function form(Form $form): Form
     {
+
+        $isCreate = $form->getOperation() === 'create';
+
         return $form
             ->schema([
                 Section::make('Información del mantenimiento')
@@ -74,11 +77,21 @@ class MantenimientoResource extends Resource
                             ->required(),
                         FileUpload::make('archivos')
                             ->label('Archivos adjuntos')
-                            ->columnSpanFull()
                             ->multiple()
                             ->downloadable()
                             ->directory('archivos/' .now()->format('Y/m/d'))
                             ->maxFiles(5),
+                        Select::make('mantenimiento_status')
+                            ->label('Estado del mantenimiento')
+                            ->options(
+                                $isCreate ? ['pendiente' => 'Pendiente']
+                                : [
+                                    'pendiente' => 'Pendiente',
+                                    'aprobado' => 'Aprobado',
+                                    'rechazado' => 'Rechazado',
+                                ]
+                            )
+                            ->required(),
                     ]),
             ]);
     }
@@ -116,6 +129,22 @@ class MantenimientoResource extends Resource
                 TextColumn::make('vehicle.placa')
                     ->label('Placa')
                     ->searchable()
+                    ->alignCenter(),
+                TextColumn::make('mantenimiento_status')
+                    ->label('Estado del mantenimiento')
+                    ->badge()
+                    ->formatStateUsing(function ($state){
+                        return match ($state) {
+                            'pendiente' => 'Pendiente',
+                            'aprobado' => 'Aprobado',
+                            'rechazado' => 'Rechazado',
+                        };
+                    })
+                    ->color(fn (string $state): string => match ($state) {
+                        'pendiente' => 'warning',
+                        'aprobado' => 'success',
+                        'rechazado' => 'danger',
+                    })
                     ->alignCenter(),
                 TextColumn::make('created_at')
                     ->label('Creado el')

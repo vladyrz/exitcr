@@ -103,6 +103,22 @@ class MantenimientoResource extends Resource
                     ->label('Placa')
                     ->searchable()
                     ->alignCenter(),
+                TextColumn::make('mantenimiento_status')
+                    ->label('Estado del mantenimiento')
+                    ->badge()
+                    ->formatStateUsing(function ($state){
+                        return match ($state) {
+                            'pendiente' => 'Pendiente',
+                            'aprobado' => 'Aprobado',
+                            'rechazado' => 'Rechazado',
+                        };
+                    })
+                    ->color(fn (string $state): string => match ($state) {
+                        'pendiente' => 'warning',
+                        'aprobado' => 'success',
+                        'rechazado' => 'danger',
+                    })
+                    ->alignCenter(),
                 TextColumn::make('created_at')
                     ->label('Creado el')
                     ->dateTime()
@@ -126,6 +142,13 @@ class MantenimientoResource extends Resource
                         'mantenimiento' => 'Mantenimiento',
                         'otro' => 'Otro',
                     ]),
+                SelectFilter::make('mantenimiento_status')
+                    ->label('Estado del mantenimiento')
+                    ->options([
+                        'pendiente' => 'Pendiente',
+                        'aprobado' => 'Aprobado',
+                        'rechazado' => 'Rechazado',
+                    ]),
             ])
             ->actions([
                 CommentsAction::make()
@@ -134,11 +157,6 @@ class MantenimientoResource extends Resource
                 Tables\Actions\EditAction::make()
                     ->color('warning'),
                 Tables\Actions\ViewAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
             ]);
     }
 
