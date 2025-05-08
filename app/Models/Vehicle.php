@@ -11,7 +11,6 @@ class Vehicle extends Model
     use HasFactory, HasFilamentComments;
 
     protected $fillable = [
-        'user_id',
         'placa',
         'marca',
         'estilo',
@@ -19,8 +18,8 @@ class Vehicle extends Model
         'status',
     ];
 
-    public function user()
+    public function users()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsToMany(User::class);
     }
 }

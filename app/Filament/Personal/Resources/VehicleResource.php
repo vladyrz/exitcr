@@ -16,7 +16,6 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Illuminate\Support\Facades\Auth;
 use Parallax\FilamentComments\Tables\Actions\CommentsAction;
 
 class VehicleResource extends Resource
@@ -36,7 +35,9 @@ class VehicleResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-            ->where('user_id', Auth::user()->id);
+            ->whereHas('users', function ($query) {
+                $query->where('users.id', auth()->id());
+            });
     }
 
     public static function form(Form $form): Form

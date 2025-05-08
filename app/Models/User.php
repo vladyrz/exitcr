@@ -57,7 +57,7 @@ class User extends Authenticatable implements HasAvatar
 
     public function vehicles()
     {
-        return $this->hasMany(Vehicle::class);
+        return $this->belongsToMany(Vehicle::class);
     }
 
     public function mantenimientos()

@@ -83,7 +83,7 @@ class AdminPanelProvider extends PanelProvider
                         ]),
                     PanelRoles::make()
                         ->roleToAssign('super_admin')
-                        ->restrictedRoles(['super_admin']),
+                        ->restrictedRoles(['super_admin', 'admin']),
                     FilamentApexChartsPlugin::make(),
                     FilamentEditProfilePlugin::make()
                         ->setIcon('heroicon-o-user')
@@ -101,6 +101,7 @@ class AdminPanelProvider extends PanelProvider
                     ->icon('heroicon-o-cog-6-tooth')
                     ->visible(fn (): bool => auth()->user()->hasAnyRole([
                         'super_admin',
+                        'admin',
                     ])),
             ]);
     }

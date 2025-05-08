@@ -70,7 +70,7 @@ class PersonalPanelProvider extends PanelProvider
                 [
                     PanelRoles::make()
                         ->roleToAssign('panel_user')
-                        ->restrictedRoles(['panel_user', 'super_admin']),
+                        ->restrictedRoles(['panel_user', 'super_admin', 'admin']),
 
                     FilamentApexChartsPlugin::make(),
                     FilamentEditProfilePlugin::make()
@@ -90,7 +90,8 @@ class PersonalPanelProvider extends PanelProvider
                     ->visible(function (){
                         if(auth()->user()){
                             if(auth()->user()?->hasAnyRole([
-                                'super_admin'
+                                'super_admin',
+                                'admin',
                             ])){
                                 return true;
                             }else{

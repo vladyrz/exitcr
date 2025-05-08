@@ -40,11 +40,12 @@ class VehicleResource extends Resource
                 Section::make('Información del vehículo')
                     ->columns(2)
                     ->schema([
-                        Select::make('user_id')
+                        Select::make('users')
                             ->label('Agente')
+                            ->multiple()
                             ->relationship(
-                                name: 'user',
-                                titleAttribute: 'name',
+                                'users',
+                                'name',
                             )
                             ->searchable()
                             ->preload()
@@ -82,10 +83,12 @@ class VehicleResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('user.name')
-                    ->label('Agente')
-                    ->searchable()
-                    ->alignCenter(),
+                TextColumn::make('users.name')
+                    ->label('Agente(s)')
+                    ->alignCenter()
+                    ->limit(50)
+                    ->badge()
+                    ->searchable(),
                 TextColumn::make('placa')
                     ->label('Placa')
                     ->searchable()
@@ -135,14 +138,6 @@ class VehicleResource extends Resource
             ])
             ->defaultSort('created_at', 'desc')
             ->filters([
-                SelectFilter::make('user_id')
-                    ->label('Agente')
-                    ->relationship(
-                        name: 'user',
-                        titleAttribute: 'name',
-                    )
-                    ->searchable()
-                    ->preload(),
                 SelectFilter::make('status')
                     ->label('Estado del vehículo')
                     ->options([
