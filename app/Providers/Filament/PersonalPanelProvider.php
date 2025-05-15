@@ -30,6 +30,7 @@ class PersonalPanelProvider extends PanelProvider
     public function panel(Panel $panel): Panel
     {
         return $panel
+            ->favicon(asset('images/favicon.ico'))
             ->id('personal')
             ->path('personal')
             ->login()

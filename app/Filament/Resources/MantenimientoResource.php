@@ -65,9 +65,10 @@ class MantenimientoResource extends Resource
                             }),
                         Select::make('vehicle_id')
                             ->label('Vehículo')
-                            ->options(fn (Get $get): Collection => Vehicle::query()
-                                ->where('user_id', $get('user_id'))
-                                ->pluck('placa', 'id')
+                            ->options(fn (Get $get): Collection =>
+                                Vehicle::whereHas('users', function ($query) use ($get) {
+                                    $query->where('users.id', $get('user_id'));
+                                })->pluck('placa', 'id')
                             )
                             ->searchable()
                             ->preload()

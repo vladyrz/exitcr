@@ -50,7 +50,8 @@ class MovimientoResource extends Resource
                                 'salida' => 'Salida',
                                 'ingreso' => 'Ingreso',
                             ])
-                            ->required(),
+                            ->required()
+                            ->reactive(),
                         DateTimePicker::make('fecha_movimiento')
                             ->label('Fecha del movimiento')
                             ->required(),
@@ -69,19 +70,20 @@ class MovimientoResource extends Resource
                             }),
                         Select::make('vehicle_id')
                             ->label('Vehículo')
-                            ->options(fn (Get $get): Collection => Vehicle::query()
-                                ->where('user_id', $get('user_id'))
-                                ->pluck('placa', 'id')
-                            )
+                            ->options(fn (Get $get): Collection => Vehicle::whereHas('users', function ($query) use ($get) {
+                                $query->where('users.id', $get('user_id'));
+                            })->pluck('placa', 'id'))
                             ->searchable()
                             ->preload()
                             ->required(),
                         TextInput::make('kilometraje_inicial')
                             ->label('Kilometraje inicial')
-                            ->maxLength(20),
+                            ->maxLength(20)
+                            ->visible(fn (Get $get): bool => $get('tipo_movimiento') === 'ingreso'),
                         TextInput::make('kilometraje_final')
                             ->label('Kilometraje final')
-                            ->maxLength(20),
+                            ->maxLength(20)
+                            ->visible(fn (Get $get): bool => $get('tipo_movimiento') === 'salida'),
                         Select::make('movimiento_status')
                             ->label('Estado del movimiento')
                             ->options(

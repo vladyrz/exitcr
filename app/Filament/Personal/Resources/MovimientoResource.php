@@ -13,6 +13,7 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
@@ -50,25 +51,24 @@ class MovimientoResource extends Resource
                                 'salida' => 'Salida',
                                 'ingreso' => 'Ingreso',
                             ])
-                            ->required(),
+                            ->required()
+                            ->reactive(),
                         DateTimePicker::make('fecha_movimiento')
                             ->label('Fecha del movimiento')
                             ->required(),
                         Select::make('vehicle_id')
                             ->label('Vehículo')
-                            ->options(Vehicle::query()
-                                ->where('user_id', Auth::user()->id)
-                                ->pluck('placa', 'id')
-                            )
-                            ->searchable()
-                            ->preload()
-                            ->required(),
+                            ->options(fn () => Auth::user()
+                                ->vehicles()
+                                ->pluck('placa', 'vehicles.id')),
                         TextInput::make('kilometraje_inicial')
                             ->label('Kilometraje inicial')
-                            ->maxLength(20),
+                            ->maxLength(20)
+                            ->visible(fn (Get $get): bool => $get('tipo_movimiento') === 'ingreso'),
                         TextInput::make('kilometraje_final')
                             ->label('Kilometraje final')
-                            ->maxLength(20),
+                            ->maxLength(20)
+                            ->visible(fn (Get $get): bool => $get('tipo_movimiento') === 'salida'),
                         FileUpload::make('archivos')
                             ->label('Archivos adjuntos')
                             ->multiple()

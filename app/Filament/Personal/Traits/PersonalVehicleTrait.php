@@ -10,15 +10,18 @@ trait PersonalVehicleTrait
 {
     protected function getChartData(): array
     {
-        $userId = Auth::id();
+        $user = Auth::user();
 
         $statuses = ['activo', 'inactivo', 'vendido', 'eliminado'];
         $trendData = [];
 
         foreach ($statuses as $status) {
+            $vehicleIds = $user->vehicles()
+                ->where('status', $status)
+                ->pluck('vehicles.id');
+
             $trendData[$status] = Trend::query(
-                Vehicle::where('user_id', $userId)
-                    ->where('status', $status)
+                Vehicle::whereIn('id', $vehicleIds)
             )
                 ->between(
                     start: now()->startOfYear(),
