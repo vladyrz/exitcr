@@ -69,4 +69,9 @@ class User extends Authenticatable implements HasAvatar
     {
         return $this->hasMany(Movimiento::class);
     }
+
+    public function proyectos()
+    {
+        return $this->hasMany(Proyecto::class);
+    }
 }
