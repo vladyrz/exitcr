@@ -50,6 +50,9 @@ class VehicleResource extends Resource
                             ->searchable()
                             ->preload()
                             ->required(),
+                        TextInput::make('numero_contrato')
+                            ->label('Número de contrato')
+                            ->required(),
                         TextInput::make('placa')
                             ->label('Placa')
                             ->required()
@@ -89,6 +92,10 @@ class VehicleResource extends Resource
                     ->limit(50)
                     ->badge()
                     ->searchable(),
+                TextColumn::make('numero_contrato')
+                    ->label('Número de contrato')
+                    ->searchable()
+                    ->alignCenter(),
                 TextColumn::make('placa')
                     ->label('Placa')
                     ->searchable()
