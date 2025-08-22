@@ -11,8 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('vehicles', function (Blueprint $table) {
+        Schema::table('movimientos', function (Blueprint $table) {
             $table->string('numero_contrato')->after('id');
+            $table->timestamp('fecha_entrega')->nullable()->after('fecha_movimiento');
+            $table->text('observaciones')->nullable()->after('kilometraje_final');
         });
     }
 
@@ -21,7 +23,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('vehicles', function (Blueprint $table) {
+        Schema::table('movimientos', function (Blueprint $table) {
             //
         });
     }

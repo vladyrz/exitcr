@@ -11,6 +11,7 @@ use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
@@ -24,6 +25,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Date;
 use Parallax\FilamentComments\Tables\Actions\CommentsAction;
 
 class MovimientoResource extends Resource
@@ -44,6 +46,9 @@ class MovimientoResource extends Resource
                 Section::make('Información del movimiento')
                     ->columns(2)
                     ->schema([
+                        TextInput::make('numero_contrato')
+                            ->label('Número de contrato')
+                            ->required(),
                         Select::make('tipo_movimiento')
                             ->label('Tipo de movimiento')
                             ->options([
@@ -55,6 +60,8 @@ class MovimientoResource extends Resource
                         DateTimePicker::make('fecha_movimiento')
                             ->label('Fecha del movimiento')
                             ->required(),
+                        DateTimePicker::make('fecha_entrega')
+                            ->label('Fecha de entrega'),
                         Select::make('user_id')
                             ->label('Agente')
                             ->relationship(
@@ -84,6 +91,8 @@ class MovimientoResource extends Resource
                             ->label('Kilometraje final')
                             ->maxLength(20)
                             ->visible(fn (Get $get): bool => $get('tipo_movimiento') === 'salida'),
+                        Textarea::make('observaciones')
+                            ->label('Observaciones'),
                         Select::make('movimiento_status')
                             ->label('Estado del movimiento')
                             ->options(
@@ -109,6 +118,10 @@ class MovimientoResource extends Resource
     {
         return $table
             ->columns([
+                TextColumn::make('numero_contrato')
+                    ->label('Número de contrato')
+                    ->searchable()
+                    ->alignCenter(),
                 TextColumn::make('tipo_movimiento')
                     ->label('Tipo de movimiento')
                     ->badge()
@@ -127,6 +140,10 @@ class MovimientoResource extends Resource
                     ->label('Fecha del movimiento')
                     ->dateTime()
                     ->alignCenter(),
+                TextColumn::make('fecha_entrega')
+                    ->label('Fecha de entrega')
+                    ->dateTime()
+                    ->alignCenter(),
                 TextColumn::make('user.name')
                     ->label('Agente')
                     ->searchable()
@@ -141,6 +158,9 @@ class MovimientoResource extends Resource
                 TextColumn::make('kilometraje_final')
                     ->label('Kilometraje final')
                     ->alignCenter(),
+                TextColumn::make('observaciones')
+                    ->label('Observaciones')
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('movimiento_status')
                     ->label('Estado del movimiento')
                     ->badge()

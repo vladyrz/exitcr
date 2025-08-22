@@ -47,9 +47,6 @@ class VehicleResource extends Resource
                 Section::make('Información del vehículo')
                     ->columns(2)
                     ->schema([
-                        TextInput::make('numero_contrato')
-                            ->label('Número de contrato')
-                            ->required(),
                         TextInput::make('placa')
                             ->label('Placa')
                             ->required()
@@ -74,10 +71,6 @@ class VehicleResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('numero_contrato')
-                    ->label('Número de contrato')
-                    ->searchable()
-                    ->alignCenter(),
                 TextColumn::make('placa')
                     ->label('Placa')
                     ->searchable()

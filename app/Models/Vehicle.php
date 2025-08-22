@@ -11,7 +11,6 @@ class Vehicle extends Model
     use HasFactory, HasFilamentComments;
 
     protected $fillable = [
-        'numero_contrato',
         'placa',
         'marca',
         'estilo',

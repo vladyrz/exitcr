@@ -11,6 +11,7 @@ use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
@@ -45,6 +46,9 @@ class MovimientoResource extends Resource
                 Section::make('Información del movimiento')
                     ->columns(2)
                     ->schema([
+                        TextInput::make('numero_contrato')
+                            ->label('Número de contrato')
+                            ->required(),
                         Select::make('tipo_movimiento')
                             ->label('Tipo de movimiento')
                             ->options([
@@ -56,6 +60,8 @@ class MovimientoResource extends Resource
                         DateTimePicker::make('fecha_movimiento')
                             ->label('Fecha del movimiento')
                             ->required(),
+                        DateTimePicker::make('fecha_entrega')
+                            ->label('Fecha de entrega'),
                         Select::make('vehicle_id')
                             ->label('Vehículo')
                             ->options(fn () => Auth::user()
@@ -69,6 +75,8 @@ class MovimientoResource extends Resource
                             ->label('Kilometraje final')
                             ->maxLength(20)
                             ->visible(fn (Get $get): bool => $get('tipo_movimiento') === 'salida'),
+                        Textarea::make('observaciones')
+                            ->label('Observaciones'),
                         FileUpload::make('archivos')
                             ->label('Archivos adjuntos')
                             ->multiple()
@@ -83,6 +91,10 @@ class MovimientoResource extends Resource
     {
         return $table
             ->columns([
+                TextColumn::make('numero_contrato')
+                    ->label('Número de contrato')
+                    ->searchable()
+                    ->alignCenter(),
                 TextColumn::make('tipo_movimiento')
                     ->label('Tipo de movimiento')
                     ->badge()
@@ -101,6 +113,10 @@ class MovimientoResource extends Resource
                     ->label('Fecha del movimiento')
                     ->dateTime()
                     ->alignCenter(),
+                TextColumn::make('fecha_entrega')
+                    ->label('Fecha de entrega')
+                    ->dateTime()
+                    ->alignCenter(),
                 TextColumn::make('vehicle.placa')
                     ->label('Placa')
                     ->searchable()
@@ -111,6 +127,9 @@ class MovimientoResource extends Resource
                 TextColumn::make('kilometraje_final')
                     ->label('Kilometraje final')
                     ->alignCenter(),
+                TextColumn::make('observaciones')
+                    ->label('Observaciones')
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('movimiento_status')
                     ->label('Estado del movimiento')
                     ->badge()

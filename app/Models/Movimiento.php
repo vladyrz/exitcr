@@ -11,12 +11,15 @@ class Movimiento extends Model
     use HasFactory, HasFilamentComments;
 
     protected $fillable = [
+        'numero_contrato',
         'tipo_movimiento',
         'fecha_movimiento',
+        'fecha_entrega',
         'user_id',
         'vehicle_id',
         'kilometraje_inicial',
         'kilometraje_final',
+        'observaciones',
         'archivos',
         'movimiento_status',
     ];
