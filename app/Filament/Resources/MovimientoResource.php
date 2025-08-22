@@ -55,8 +55,7 @@ class MovimientoResource extends Resource
                                 'salida' => 'Salida',
                                 'ingreso' => 'Ingreso',
                             ])
-                            ->required()
-                            ->reactive(),
+                            ->required(),
                         DateTimePicker::make('fecha_movimiento')
                             ->label('Fecha del movimiento')
                             ->required(),
@@ -85,12 +84,10 @@ class MovimientoResource extends Resource
                             ->required(),
                         TextInput::make('kilometraje_inicial')
                             ->label('Kilometraje inicial')
-                            ->maxLength(20)
-                            ->visible(fn (Get $get): bool => $get('tipo_movimiento') === 'ingreso'),
+                            ->maxLength(20),
                         TextInput::make('kilometraje_final')
                             ->label('Kilometraje final')
-                            ->maxLength(20)
-                            ->visible(fn (Get $get): bool => $get('tipo_movimiento') === 'salida'),
+                            ->maxLength(20),
                         Textarea::make('observaciones')
                             ->label('Observaciones'),
                         Select::make('movimiento_status')
