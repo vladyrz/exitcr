@@ -54,6 +54,7 @@ class MovimientoResource extends Resource
                             ->options([
                                 'salida' => 'Salida',
                                 'ingreso' => 'Ingreso',
+                                'reserva' => 'Reserva',
                             ])
                             ->required(),
                         DateTimePicker::make('fecha_movimiento')
@@ -74,6 +75,15 @@ class MovimientoResource extends Resource
                             ->afterStateUpdated(function (Set $set){
                                 $set('vehicle_id', null);
                             }),
+                        Select::make('cliente_id')
+                            ->label('Cliente')
+                            ->relationship(
+                                name: 'cliente',
+                                titleAttribute: 'nombre',
+                            )
+                            ->preload()
+                            ->searchable()
+                            ->required(),
                         Select::make('vehicle_id')
                             ->label('Vehículo')
                             ->options(fn (Get $get): Collection => Vehicle::whereHas('users', function ($query) use ($get) {
@@ -88,6 +98,19 @@ class MovimientoResource extends Resource
                         TextInput::make('kilometraje_final')
                             ->label('Kilometraje final')
                             ->maxLength(20),
+                        Select::make('estado_pago')
+                            ->label('Estado del pago')
+                            ->options([
+                                'pendiente' => 'Pendiente',
+                                'cancelado' => 'Cancelado',
+                                'orden_compra' => 'Orden de compra',
+                                'saldo_pendiente' => 'Saldo pendiente',
+                            ])
+                            ->reactive()
+                            ->required(),
+                        TextInput::make('monto_pendiente')
+                            ->label('Monto pendiente')
+                            ->visible(fn (Get $get): bool => $get('estado_pago') === 'saldo_pendiente'),
                         Textarea::make('observaciones')
                             ->label('Observaciones'),
                         Select::make('movimiento_status')
@@ -145,6 +168,10 @@ class MovimientoResource extends Resource
                     ->label('Agente')
                     ->searchable()
                     ->alignCenter(),
+                TextColumn::make('cliente.nombre')
+                    ->label('Cliente')
+                    ->searchable()
+                    ->alignCenter(),
                 TextColumn::make('vehicle.placa')
                     ->label('Placa')
                     ->searchable()
@@ -155,6 +182,27 @@ class MovimientoResource extends Resource
                 TextColumn::make('kilometraje_final')
                     ->label('Kilometraje final')
                     ->alignCenter(),
+                TextColumn::make('estado_pago')
+                    ->label('Estado del pago')
+                    ->badge()
+                    ->formatStateUsing(function ($state){
+                        return match ($state) {
+                            'pendiente' => 'Pendiente',
+                            'cancelado' => 'Cancelado',
+                            'orden_compra' => 'Orden de compra',
+                            'saldo_pendiente' => 'Saldo pendiente',
+                        };
+                    })
+                    ->color(fn (string $state): string => match ($state) {
+                        'pendiente' => 'warning',
+                        'cancelado' => 'danger',
+                        'orden_compra' => 'success',
+                        'saldo_pendiente' => 'info',
+                    }),
+                TextColumn::make('monto_pendiente')
+                    ->label('Monto pendiente')
+                    ->alignCenter()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('observaciones')
                     ->label('Observaciones')
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -178,6 +226,7 @@ class MovimientoResource extends Resource
                     ->label('Creado el')
                     ->dateTime()
                     ->alignCenter()
+                    ->searchable()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: false),
                 TextColumn::make('updated_at')

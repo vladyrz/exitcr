@@ -16,9 +16,12 @@ class Movimiento extends Model
         'fecha_movimiento',
         'fecha_entrega',
         'user_id',
+        'cliente_id',
         'vehicle_id',
         'kilometraje_inicial',
         'kilometraje_final',
+        'estado_pago',
+        'monto_pendiente',
         'observaciones',
         'archivos',
         'movimiento_status',
@@ -36,5 +39,10 @@ class Movimiento extends Model
     public function vehicle()
     {
         return $this->belongsTo(Vehicle::class);
+    }
+
+    public function cliente()
+    {
+        return $this->belongsTo(Cliente::class);
     }
 }
