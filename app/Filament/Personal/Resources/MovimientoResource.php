@@ -61,6 +61,15 @@ class MovimientoResource extends Resource
                             ->required(),
                         DateTimePicker::make('fecha_entrega')
                             ->label('Fecha de entrega'),
+                        Select::make('cliente_id')
+                            ->label('Cliente')
+                            ->relationship(
+                                name: 'cliente',
+                                titleAttribute: 'nombre',
+                            )
+                            ->preload()
+                            ->searchable()
+                            ->required(),
                         Select::make('vehicle_id')
                             ->label('Vehículo')
                             ->options(fn () => Auth::user()
@@ -72,6 +81,19 @@ class MovimientoResource extends Resource
                         TextInput::make('kilometraje_final')
                             ->label('Kilometraje final')
                             ->maxLength(20),
+                        Select::make('estado_pago')
+                            ->label('Estado del pago')
+                            ->options([
+                                'pendiente' => 'Pendiente',
+                                'cancelado' => 'Cancelado',
+                                'orden_compra' => 'Orden de compra',
+                                'saldo_pendiente' => 'Saldo pendiente',
+                            ])
+                            ->reactive()
+                            ->required(),
+                        TextInput::make('monto_pendiente')
+                            ->label('Monto pendiente')
+                            ->visible(fn (Get $get): bool => $get('estado_pago') === 'saldo_pendiente'),
                         Textarea::make('observaciones')
                             ->label('Observaciones'),
                         FileUpload::make('archivos')
@@ -114,6 +136,10 @@ class MovimientoResource extends Resource
                     ->label('Fecha de entrega')
                     ->dateTime()
                     ->alignCenter(),
+                TextColumn::make('cliente.nombre')
+                    ->label('Cliente')
+                    ->searchable()
+                    ->alignCenter(),
                 TextColumn::make('vehicle.placa')
                     ->label('Placa')
                     ->searchable()
@@ -124,6 +150,27 @@ class MovimientoResource extends Resource
                 TextColumn::make('kilometraje_final')
                     ->label('Kilometraje final')
                     ->alignCenter(),
+                TextColumn::make('estado_pago')
+                    ->label('Estado del pago')
+                    ->badge()
+                    ->formatStateUsing(function ($state){
+                        return match ($state) {
+                            'pendiente' => 'Pendiente',
+                            'cancelado' => 'Cancelado',
+                            'orden_compra' => 'Orden de compra',
+                            'saldo_pendiente' => 'Saldo pendiente',
+                        };
+                    })
+                    ->color(fn (string $state): string => match ($state) {
+                        'pendiente' => 'warning',
+                        'cancelado' => 'danger',
+                        'orden_compra' => 'success',
+                        'saldo_pendiente' => 'info',
+                    }),
+                TextColumn::make('monto_pendiente')
+                    ->label('Monto pendiente')
+                    ->alignCenter()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('observaciones')
                     ->label('Observaciones')
                     ->toggleable(isToggledHiddenByDefault: true),
