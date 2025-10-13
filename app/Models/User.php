@@ -74,4 +74,9 @@ class User extends Authenticatable implements HasAvatar
     {
         return $this->hasMany(Proyecto::class);
     }
+
+    public function vacaciones()
+    {
+        return $this->hasMany(Vacacion::class);
+    }
 }
